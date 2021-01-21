@@ -1,4 +1,5 @@
-import React, { useRef, useReducer, useMemo, useCallback } from 'react';
+import React, { useRef, useReducer, useMemo, useCallback, createContext } from 'react';
+import produce from 'immer';
 import UserList from './UserList';
 import CreateUser from './CreateUser';
 import useInputs from './useInputs'
@@ -50,27 +51,53 @@ function reducer(state, action) {
     //   };
       //oncreate
     case 'CREATE_USER':
-      return {
-        inputs: initialState.inputs,
-        users: state.users.concat(action.user)
-      };
+
+      //immer사용
+      return produce(state, draft => {
+        draft.users.push(action.user);
+      });
+
+      //기존
+      // return {
+      //   inputs: initialState.inputs,
+      //   users: state.users.concat(action.user)
+      // };
       //ontoggle
     case 'TOGGLE_USER':
-      return {
-        ...state,
-        users: state.users.map(user =>
-          user.id === action.id ? { ...user, active: !user.active } : user
-        )
-      };
+
+      //immer사용
+      return produce(state, draft => {
+        const user = draft.users.find(user => user.id === action.id);
+        user.active = !user.active;
+      });
+
+      //기존
+      // return {
+      //   ...state,
+      //   users: state.users.map(user =>
+      //     user.id === action.id ? { ...user, active: !user.active } : user
+      //   )
+      // };
     case 'REMOVE_USER':
-      return {
-        ...state,
-        users: state.users.filter(user => user.id !== action.id)
-      };
+
+    //immer사용
+      return produce(state, draft => {
+        const index = draft.users.findIndex(user => user.id === action.id);
+        draft.users.splice(index, 1);
+      });
+
+      //기존
+      // return {
+      //   ...state,
+      //   users: state.users.filter(user => user.id !== action.id)
+      // };
     default:
       return state;
   }
 }
+
+// UserDispatch 라는 이름으로 내보내줍니다.
+export const UserDispatch = React.createContext(null);
 
 function App() {
   //state-상태, dispatch- 액션을 발생시킨다는 뜻
@@ -115,33 +142,22 @@ function App() {
     reset();
   }, [username, email, reset]); //여기에 꼭 써줘야함
 
-  const onToggle = useCallback(id => {
-    dispatch({
-      type: 'TOGGLE_USER',
-      id
-    });
-  }, []);
-
-  const onRemove = useCallback(id => {
-    dispatch({
-      type: 'REMOVE_USER',
-      id
-    });
-  }, []);
-
   //활성 사용자 수 세기
   const count = useMemo(() => countActiveUsers(users), [users]);
   return (
-    <>
+    //context사용하여 value값 바로보내기!!
+    <UserDispatch.Provider value={dispatch}>
       <CreateUser
         username={username}
         email={email}
         onChange={onChange}
         onCreate={onCreate}
       />
-      <UserList users={users} onToggle={onToggle} onRemove={onRemove} />
+      <UserList
+       users={users} 
+       />
       <div>활성사용자 수 : {count}</div>
-    </>
+    </UserDispatch.Provider>
   );
 }
 
