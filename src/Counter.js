@@ -1,6 +1,8 @@
 import React, { useReducer } from 'react';
 
+//useReducer 예제 (상태, 행동)
 function reducer(state, action) {
+    //action의 type을 정해줌
   switch (action.type) {
     case 'INCREMENT':
       return state + 1;
@@ -12,6 +14,7 @@ function reducer(state, action) {
 }
 
 function Counter() {
+    //현재 상태, 액션 발생
   const [number, dispatch] = useReducer(reducer, 0);
 
   const onIncrease = () => {
