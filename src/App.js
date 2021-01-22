@@ -2,7 +2,8 @@ import React, { useRef, useReducer, useMemo, useCallback, createContext } from '
 import produce from 'immer';
 import UserList from './UserList';
 import CreateUser from './CreateUser';
-import useInputs from './useInputs'
+import useInputs from './useInputs';
+import Button from './components/Button'
 
 function countActiveUsers(users) {
   console.log('활성 사용자 수를 세는중...');
@@ -157,6 +158,11 @@ function App() {
        users={users} 
        />
       <div>활성사용자 수 : {count}</div>
+
+
+      <Button size="large">버튼</Button>
+      <Button size="small">버튼</Button>
+      <Button>버튼</Button>
     </UserDispatch.Provider>
   );
 }
