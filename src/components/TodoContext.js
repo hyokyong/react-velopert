@@ -51,6 +51,8 @@ export function TodoProvider({ children }) {
   const [state, dispatch] = useReducer(todoReducer, initialTodos); //useReducer 사용함
   const nextId = useRef(5); //useRef 사용함
 
+  console.log(state);
+
   return (
     <TodoStateContext.Provider value={state}>
       <TodoDispatchContext.Provider value={dispatch}>
@@ -62,15 +64,28 @@ export function TodoProvider({ children }) {
   );
 }
 
-//커스텀 훅 만들기
+//커스텀 훅 만들기 useContext 이용함!
+//이렇게 에러처리를 해주면 나중에 찾기 쉬움!
 export function useTodoState() {
-  return useContext(TodoStateContext);
-}
-
-export function useTodoDispatch() {
-  return useContext(TodoDispatchContext);
-}
-
-export function useTodoNextId() {
-  return useContext(TodoNextIdContext);
-}
+    const context = useContext(TodoStateContext);
+    if (!context) {
+      throw new Error('Cannot find TodoProvider');
+    }
+    return context;
+  }
+  
+  export function useTodoDispatch() {
+    const context = useContext(TodoDispatchContext);
+    if (!context) {
+      throw new Error('Cannot find TodoProvider');
+    }
+    return context;
+  }
+  
+  export function useTodoNextId() {
+    const context = useContext(TodoNextIdContext);
+    if (!context) {
+      throw new Error('Cannot find TodoProvider');
+    }
+    return context;
+  }
