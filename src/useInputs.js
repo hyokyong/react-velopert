@@ -9,7 +9,8 @@ function useInputs(initialForm) { //initialForm - input에서 관리할 초기�
     const { name, value } = e.target;
     setForm(form => ({ ...form, [name]: value }));
   }, []);
-  
+
+  //
   //폼 초기화 함수
   const reset = useCallback(() => setForm(initialForm), [initialForm]);
 
@@ -18,3 +19,4 @@ function useInputs(initialForm) { //initialForm - input에서 관리할 초기�
 }
 
 export default useInputs;
+
